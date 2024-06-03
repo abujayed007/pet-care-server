@@ -97,7 +97,16 @@ async function run() {
             const result = await usersCollection.findOne({ email: email })
             res.send(result)
         })
-
+        
+        app.patch('/user/:id', async(req, res)=>{
+            const id = req.params.id 
+            const userData = req.body
+            const query = {_id: new ObjectId(id)}
+            const updateData = { $set: userData }
+            const filter = {upsert:true}
+            const result = await usersCollection.updateOne(query, updateData , filter)
+            res.send(result)
+        })
         await client.db("admin").command({ ping: 1 });
 
     } finally {
