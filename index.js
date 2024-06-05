@@ -4,7 +4,7 @@ const express = require('express')
 const cors = require('cors')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
-const port = process.env.PORT || 5000
+const port = process.env.PORT  || 5000
 
 app.use(cors())
 app.use(express.json())
@@ -29,8 +29,9 @@ function verifyToken ( req, res, next){
     req.user = verify.email
     next()
 }
-
-const uri = process.env.APP_URI;
+const user = process.env.APP_USER
+const pass= process.env.APP_PASS
+const uri = `mongodb+srv://${user}:${pass}@cluster0.yyytqsz.mongodb.net/?retryWrites=true&w=majority appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -130,6 +131,13 @@ async function run() {
             }
             await usersCollection.insertOne(user)
             res.send({ token })
+        })
+
+        app.get('/user',async (req, res)=>{
+            const data = req.body
+            const users =  usersCollection.find(data)
+            const result =await users.toArray()
+            res.send(result)
         })
 
         app.get('/user/:email', async (req, res) => {
