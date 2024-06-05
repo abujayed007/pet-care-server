@@ -59,17 +59,17 @@ async function run() {
         })
 
 
-        app.get('/pets', async (req, res) => {
-            const filter = req.query
-            // console.log(filter);
-            const query= {
-                name:{$regex:filter.search, $options:'i'}
-            }
-            const data = petsCollection.find(query)
-            const allPets = await data.toArray()
-            // console.log(allPets);
-            res.send(allPets)
-        })
+        // app.get('/pets', async (req, res) => {
+        //     const filter = req.query
+        //     // console.log(filter);
+        //     const query= {
+        //         name:{$regex:filter.search, $options:'i'}
+        //     }
+        //     const data = petsCollection.find(query)
+        //     const allPets = await data.toArray()
+        //     // console.log(allPets);
+        //     res.send(allPets)
+        // })
 
 
         app.get('/pets', async (req, res) => {
