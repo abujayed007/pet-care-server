@@ -31,10 +31,14 @@ function verifyToken ( req, res, next){
 }
 const user = process.env.APP_USER
 const pass= process.env.APP_PASS
-const uri = `mongodb+srv://${user}:${pass}@cluster0.yyytqsz.mongodb.net/?retryWrites=true&w=majority appName=Cluster0`;
+// const uri = `mongodb+srv://${user}:${pass}@cluster0.yyytqsz.mongodb.net/?retryWrites=true&w=majority& appName=Cluster0`;
+
+const uri = `mongodb+srv://${user}:${pass}@cluster0.yyytqsz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
+const client = new MongoClient(uri,
+    {
     serverApi: {
         version: ServerApiVersion.v1,
         strict: true,
@@ -57,19 +61,6 @@ async function run() {
             const result = await filter.toArray()
             res.send(result)
         })
-
-
-        // app.get('/pets', async (req, res) => {
-        //     const filter = req.query
-        //     // console.log(filter);
-        //     const query= {
-        //         name:{$regex:filter.search, $options:'i'}
-        //     }
-        //     const data = petsCollection.find(query)
-        //     const allPets = await data.toArray()
-        //     // console.log(allPets);
-        //     res.send(allPets)
-        // })
 
 
         app.get('/pets', async (req, res) => {
@@ -150,20 +141,30 @@ async function run() {
             res.send(result)
         })
 
+        app.get("/user/get/:id", async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const result = await usersCollection.findOne({ _id: new ObjectId(id) });
+            res.send(result);
+          });
+
         app.get('/user/:email', async (req, res) => {
             const email = req.params.email
-            const result = await usersCollection.findOne({ email: email })
+            const result = await usersCollection.findOne({ email})
             res.send(result)
         })
 
-        app.patch('/user/:id',verifyToken, async (req, res) => {
-            const id = req.params.id
-            const userData = req.body
-            const query = { _id: new ObjectId(id) }
-            const updateData = { $set: userData }
-            const filter = { upsert: true }
-            const result = await usersCollection.updateOne(query, updateData, filter)
-            res.send(result)
+        
+
+        app.patch('/user/:email',verifyToken, async (req, res) => {
+            const email = req.params.email;
+            const userData = req.body;
+            const result = await usersCollection.updateOne(
+              { email },
+              { $set: userData },
+              { upsert: true }
+            );
+            res.send(result);
         })
         await client.db("admin").command({ ping: 1 });
 
