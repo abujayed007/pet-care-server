@@ -14,7 +14,7 @@ function createToken(user) {
     const token = jwt.sign({
         email: user?.email},
         'secret',
-        { expiresIn: '10d' }
+        { expiresIn: '30d' }
     )
     return token;
 }
@@ -34,6 +34,7 @@ const pass= process.env.APP_PASS
 // const uri = `mongodb+srv://${user}:${pass}@cluster0.yyytqsz.mongodb.net/?retryWrites=true&w=majority& appName=Cluster0`;
 
 const uri = `mongodb+srv://${user}:${pass}@cluster0.yyytqsz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+
 
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -65,10 +66,7 @@ async function run() {
 
         app.get('/pets', async (req, res) => {
             const filter = req.query
-            // const query= {
-            //     name:{$regex:filter.search}
-            // }
-            const data = await petsCollection.find(filter)
+            const data =  petsCollection.find(filter)
             const allPets = await data.toArray()
             // console.log(allPets);
             res.send(allPets)
